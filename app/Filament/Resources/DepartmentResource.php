@@ -51,7 +51,7 @@ class DepartmentResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('employees_count')
                     ->counts('employees')
-                    ->searchable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

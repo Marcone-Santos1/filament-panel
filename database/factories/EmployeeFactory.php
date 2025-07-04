@@ -20,11 +20,33 @@ class EmployeeFactory extends Factory
      */
     public function definition(): array
     {
+
+        // 1. Pega um Country que tenha pelo menos um State com Cities
+        $country = Country::whereHas('states', function ($query) {
+            $query->whereHas('cities');
+        })
+            ->inRandomOrder()
+            ->first();
+
+        // 2. Pega um State (do Country acima) que tenha Cities
+        $state = State::where('country_id', $country->id)
+            ->whereHas('cities')
+            ->inRandomOrder()
+            ->first();
+
+        // 3. Pega uma City do State selecionado
+        $city = City::where('state_id', $state->id)
+            ->inRandomOrder()
+            ->first();
+
+        // 4. Pega um Department válido (se não existir, pode adicionar uma verificação)
+        $department = Department::inRandomOrder()->first();
+
         return [
-            'country_id'     => Country::inRandomOrder()->value('id'),
-            'state_id'       => State::inRandomOrder()->value('id'),
-            'city_id'        => City::inRandomOrder()->value('id'),
-            'department_id'  => Department::inRandomOrder()->value('id'),
+            'country_id'    => $country->id,
+            'state_id'      => $state->id,
+            'city_id'       => $city->id,
+            'department_id' => $department->id,
             'first_name'     => $this->faker->firstName(),
             'middle_name'    => $this->faker->firstName(),
             'last_name'      => $this->faker->lastName(),
